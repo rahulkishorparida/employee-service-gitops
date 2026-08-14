@@ -1,0 +1,22 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: employee-service
+  namespace: {{ .Release.Namespace }}
+
+spec:
+  hosts:
+    - {{ .Values.ingress.host }}
+
+  http:
+    - name: primary
+      route:
+        - destination:
+            host: employee-service
+            subset: stable
+          weight: 100
+
+        - destination:
+            host: employee-service
+            subset: canary
+          weight: 0

@@ -1,0 +1,90 @@
+replicaCount: 2
+
+image:
+  repository: rahulkishorparida/employee-service
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  port: 80
+  targetPort: 8080
+
+maintenance:
+  enabled: false
+
+serviceAccount:
+  create: true
+  name: employee-sa 
+
+ingress:
+  enabled: true
+  className: nginx
+
+  host: employee.local
+
+  paths:
+    - path: /
+      pathType: Prefix
+
+  annotations:
+    nginx.ingress.kubernetes.io/limit-rps: "10"
+    nginx.ingress.kubernetes.io/limit-burst-multiplier: "5"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/hsts: "true"
+
+  tls:
+    enabled: true
+    secretName: employee-tls
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 60
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+startupProbe:
+  enabled: true
+  path: /actuator/health
+  port: 8080
+  failureThreshold: 30
+  periodSeconds: 10
+
+readinessProbe:
+  enabled: true
+  path: /actuator/health
+  port: 8080
+  periodSeconds: 10
+
+livenessProbe:
+  enabled: true
+  path: /actuator/health
+  port: 8080
+  periodSeconds: 20
+
+monitoring:
+  enabled: true
+
+  serviceMonitor:
+    enabled: true
+    interval: 15s
+    path: /actuator/prometheus
+
+rollout:
+  canary:
+    steps:
+      - setWeight: 10
+      - pause:
+          duration: 30s
+      - setWeight: 50
+      - pause:
+          duration: 30s
+      - setWeight: 100

@@ -1,0 +1,33 @@
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: employee-service
+  namespace: {{ .Release.Namespace }}
+
+spec:
+  host: employee-service
+
+  subsets:
+    - name: stable
+      labels:
+        app: employee-service
+
+    - name: canary
+      labels:
+        app: employee-service
+
+
+# It may look strange because both initially have the same app label.
+# That's intentional.
+# During the rollout, Argo Rollouts modifies these subset labels to include the appropriate 
+# rollouts-pod-template-hash for the stable and canary ReplicaSets.
+#     subsets:
+#   - name: stable
+#     labels:
+#       app: employee-service
+#       rollouts-pod-template-hash: <stable-hash>
+
+#   - name: canary
+#     labels:
+#       app: employee-service
+#       rollouts-pod-template-hash: <canary-hash>

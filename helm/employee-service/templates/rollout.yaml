@@ -1,0 +1,75 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: employee-service
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: employee-service
+
+spec:
+  replicas: {{ .Values.replicaCount }}
+
+  selector:
+    matchLabels:
+      app: employee-service
+
+  template:
+    metadata:
+      labels:
+        app: employee-service
+
+    spec:
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      {{- end }}
+
+      automountServiceAccountToken: false
+
+      containers:
+        - name: employee-service
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+          startupProbe:
+            httpGet:
+              path: {{ .Values.startupProbe.path }}
+              port: {{ .Values.startupProbe.port }}
+            failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+            periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.readinessProbe.path }}
+              port: {{ .Values.readinessProbe.port }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.livenessProbe.path }}
+              port: {{ .Values.livenessProbe.port }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+
+  strategy:
+    canary:
+      trafficRouting:
+        istio:
+          virtualService:
+            name: employee-service
+            routes:
+              - primary
+
+          destinationRule:
+            name: employee-service
+            canarySubsetName: canary
+            stableSubsetName: stable
+
+      steps:
+        {{- toYaml .Values.rollout.canary.steps | nindent 8 }}
