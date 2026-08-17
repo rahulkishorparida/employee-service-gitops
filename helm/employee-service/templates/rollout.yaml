@@ -19,6 +19,11 @@ spec:
         app: employee-service
 
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+          
       {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ .Values.serviceAccount.name }}
       {{- end }}
@@ -34,6 +39,17 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
+
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault    
 
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
