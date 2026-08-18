@@ -29,3 +29,25 @@ spec:
         - operation:
              methods: ["GET"]
              paths: ["/employee/*"]
+
+
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: employee-service-allow-ingress
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: employee-service
+
+  rules:
+    - from:
+        - source:
+            principals:
+              - "cluster.local/ns/ingress-nginx/sa/ingress-nginx"
+      to:
+        - operation:
+            methods: ["GET"]
+            paths: ["/employee/*"]
