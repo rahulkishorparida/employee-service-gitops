@@ -1,0 +1,20 @@
+{{- if .Values.maintenance.enabled }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: maintenance-html
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Maintenance</title>
+    </head>
+    <body>
+      <h1>🚧 Under Maintenance</h1>
+      <p>We will be back soon.</p>
+    </body>
+    </html>
+
+{{- end }}

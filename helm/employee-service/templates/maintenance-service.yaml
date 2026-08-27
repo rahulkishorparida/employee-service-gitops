@@ -1,0 +1,15 @@
+{{- if .Values.maintenance.enabled }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: maintenance-service
+spec:
+  type: ClusterIP
+  selector:
+    app: maintenance
+  ports:
+    - port: 80
+      targetPort: 80
+
+{{- end }}
