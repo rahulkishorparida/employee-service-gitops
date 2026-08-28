@@ -13,6 +13,8 @@ spec:
       labels:
         app: maintenance
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
         - name: maintenance
           image: nginx:alpine
