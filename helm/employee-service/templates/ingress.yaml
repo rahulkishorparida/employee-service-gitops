@@ -25,7 +25,7 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: name: {{ if $.Values.maintenance.enabled }}maintenance-service{{ else }}employee-service{{ end }}
+                name: {{ if $.Values.maintenance.enabled }}maintenance-service{{ else }}employee-service{{ end }}
                 port:
                   number: {{ $.Values.service.port }}
           {{- end }}
