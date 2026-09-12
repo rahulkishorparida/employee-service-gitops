@@ -13,7 +13,7 @@ spec:
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: employee-service-allow-reporting
+  name: employee-service-allow-employee
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
@@ -51,3 +51,27 @@ spec:
         - operation:
             methods: ["GET"]
             paths: ["/employee/*"]
+
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: employee-service-allow-reporting
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: employee-service
+
+  rules:
+    - from:
+        - source:
+            principals:
+              - "cluster.local/ns/{{ .Release.Namespace }}/sa/reporting-sa"
+      to:
+        - operation:
+            methods: ["GET"]
+            paths: ["/employee/*"]
+
+
+            # - "cluster.local/ns/dev/sa/reporting-sa"
