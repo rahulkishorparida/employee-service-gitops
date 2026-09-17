@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: rahulkishorparida/employee-service
-  tag: "7fc6b816c25fd6df142690aa746fc1f3ce2f4ad6"
+  tag: "518a5e3b5d4ea8759b1c1555565b857238490537"
   pullPolicy: IfNotPresent
 
 service:
