@@ -5,6 +5,10 @@ image:
   tag: "6f258bd03700cf02627ec25cf390e45d4d032989"
   pullPolicy: IfNotPresent
 
+alerts:
+  enabled: true
+# environment: dev
+
 service:
   port: 80
   targetPort: 8080
@@ -27,6 +31,7 @@ ingress:
       pathType: Prefix
 
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/service-upstream: "true"
     nginx.ingress.kubernetes.io/limit-rps: "10"
     nginx.ingress.kubernetes.io/limit-burst-multiplier: "5"
@@ -89,3 +94,5 @@ rollout:
       - pause:
           duration: 30s
       - setWeight: 100
+
+   
