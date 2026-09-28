@@ -6,8 +6,8 @@ image:
   pullPolicy: IfNotPresent
 
 alerts:
-  enabled: false
-# environment: dev
+  enabled: true
+environment: dev
 
 service:
   port: 80
@@ -94,4 +94,4 @@ rollout:
       - pause:
           duration: 30s
       - setWeight: 100
-
+   
