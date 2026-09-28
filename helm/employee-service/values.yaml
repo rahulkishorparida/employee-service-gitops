@@ -6,7 +6,7 @@ image:
   pullPolicy: IfNotPresent
 
 alerts:
-  enabled: true
+  enabled: false
 # environment: dev
 
 service:
@@ -95,4 +95,3 @@ rollout:
           duration: 30s
       - setWeight: 100
 
-   

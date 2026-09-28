@@ -3,7 +3,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 
 metadata:
-  name: {{ include "employee.fullname" . }}-alerts
+  name: employee-service-alerts
   namespace: {{ .Release.Namespace }}
 
   labels:
@@ -11,7 +11,7 @@ metadata:
 
 spec:
   groups:
-    - name: {{ include "employee.fullname" . }}.alerts
+    - name: emp-api-alerts
 
       rules:
         - alert: EmployeeServiceHigh5xxRate
